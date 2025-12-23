@@ -7,6 +7,9 @@ const jwt = require('jsonwebtoken');
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.get('/', (req, res) => {
+    res.send("Backend is working perfectly!");
+});
 
 // 2. Database Connection (Ab sab kuch .env se aa raha hai)
 const db = mysql.createConnection({
