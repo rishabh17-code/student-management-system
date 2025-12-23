@@ -96,6 +96,9 @@ app.delete('/student/:id', verifyToken, (req, res) => {
     });
 });
 
-app.listen(8081, () => {
-    console.log("Secure Server is running on port 8081");
+// Is variable ko app.listen se pehle ya usi ke saath likh sakte hain
+const PORT = process.env.PORT || 8081;
+
+app.listen(PORT, () => {
+    console.log(`Secure Server is running on port ${PORT}`);
 });
