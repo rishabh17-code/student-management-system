@@ -5,7 +5,11 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken'); 
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: "https://student-management-system-2-0v8x.onrender.com", // Yahan apna copy kiya hua link dalein
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
 app.use(express.json());
 app.get('/', (req, res) => {
     res.send("Backend is working perfectly!");
