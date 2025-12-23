@@ -2,15 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
+// Example: "https://student-management-system-backend.onrender.com"
+const API_BASE_URL = "https://student-management-system-1-4uj8.onrender.com"; 
+
 function App() {
   // --- 1. STATE VARIABLES ---
   const [token, setToken] = useState(localStorage.getItem('token') || '');
-  
-  // Login ke liye ab Email use hoga
   const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState('');
-
-  // Student Data ke liye
   const [students, setStudents] = useState([]);
   const [name, setName] = useState('');
   const [rollNo, setRollNo] = useState('');
@@ -20,7 +19,7 @@ function App() {
   const fetchStudents = async () => {
     if (!token) return;
     try {
-      const res = await axios.get('http://localhost:8081/students', {
+      const res = await axios.get(`${API_BASE_URL}/students`, {
         headers: { 'Authorization': token }
       });
       if(res.data.message === "Access Denied! No Token." || res.data.message === "Invalid Token") {
@@ -28,27 +27,26 @@ function App() {
       } else {
         setStudents(res.data);
       }
-    } catch (err) { console.log(err); }
+    } catch (err) { console.log("Fetch Error:", err); }
   };
 
   useEffect(() => {
     if(token) fetchStudents();
   }, [token]);
 
-  // --- 3. LOGIN FUNCTION (UPDATED FOR EMAIL) ---
+  // --- 3. LOGIN FUNCTION ---
   const handleLogin = async () => {
     try {
-      // Note: Yahan hum ab 'email' bhej rahe hain
-      const res = await axios.post('http://localhost:8081/login', { email, password });
+      const res = await axios.post(`${API_BASE_URL}/login`, { email, password });
       
       if (res.data.status === "success") {
         setToken(res.data.token);
         localStorage.setItem('token', res.data.token);
         alert("Login Successful!");
       } else {
-        alert(res.data.message); // Server se jo error aayega wo dikhega
+        alert(res.data.message);
       }
-    } catch (err) { console.log(err); }
+    } catch (err) { console.log("Login Error:", err); }
   };
 
   // --- 4. LOGOUT FUNCTION ---
@@ -62,41 +60,40 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8081/add-student', 
+      await axios.post(`${API_BASE_URL}/add-student`, 
         { name, roll_no: rollNo, marks },
         { headers: { 'Authorization': token } }
       );
       setName(''); setRollNo(''); setMarks('');
       fetchStudents(); 
-    } catch (err) { console.log(err); }
+    } catch (err) { console.log("Add Student Error:", err); }
   };
 
   // --- 6. DELETE FUNCTION ---
   const handleDelete = async (id) => {
     try {
-      await axios.delete('http://localhost:8081/student/' + id, {
+      await axios.delete(`${API_BASE_URL}/student/${id}`, {
         headers: { 'Authorization': token }
       });
       fetchStudents();
-    } catch (err) { console.log(err); }
+    } catch (err) { console.log("Delete Error:", err); }
   };
 
   // --- 7. SHOW TOPPERS FUNCTION ---
   const showToppers = async () => {
     try {
-      const res = await axios.get('http://localhost:8081/students/toppers', {
+      const res = await axios.get(`${API_BASE_URL}/students/toppers`, {
         headers: { 'Authorization': token }
       });
       setStudents(res.data);
-    } catch (err) { console.log(err); }
+    } catch (err) { console.log("Toppers Error:", err); }
   };
 
-  // --- VIEW 1: LOGIN PAGE (UPDATED UI) ---
+  // --- VIEW 1: LOGIN PAGE ---
   if (!token) {
     return (
       <div style={{ padding: "50px", textAlign: "center" }}>
         <h1>Student Login</h1>
-        {/* Username ki jagah ab Email Input hai */}
         <input 
           type="email" 
           placeholder="Enter Email" 
@@ -116,7 +113,7 @@ function App() {
     );
   }
 
-  // --- VIEW 2: DASHBOARD (SAME AS BEFORE) ---
+  // --- VIEW 2: DASHBOARD ---
   return (
     <div style={{ padding: "50px" }}>
       <button onClick={handleLogout} style={{ float: "right", backgroundColor: "red", color: "white" }}>Logout</button>
