@@ -1,3 +1,4 @@
+require('dotenv').config(); // 1. Sabse upar hona chahiye
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
@@ -7,15 +8,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 1. Database Connection
+// 2. Database Connection (Ab sab kuch .env se aa raha hai)
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'root', // <--- PUT YOUR PASSWORD HERE
-    database: 'student_db'
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
 
-const SECRET_KEY = "my_secret_key"; // The key to stamp the ID cards
+// 3. Secret Key ab .env se aayegi
+const SECRET_KEY = process.env.JWT_SECRET;
 
 // 2. The Login Route (The Only Public Door)
  // REPLACED LOGIN ROUTE (Database Check)
